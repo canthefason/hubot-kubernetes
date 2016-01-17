@@ -1,0 +1,25 @@
+{
+  "name": "hubot-kubernetes",
+  "description": "Hubot Kubernetes integration",
+  "version": "0.1.0",
+  "author": "Can Yucel (https://github.com/canthefason)",
+  "license": "MIT",
+  "keywords": [
+    "hubot",
+    "hubot-scripts",
+    "kubernetes",
+    "k8s"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "github.com/canthefason/hubot-kubernetes"
+  },
+  "main": "index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "coffee-script": "~1.6",
+    "request": "^2.67.0"
+  }
+}
