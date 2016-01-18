@@ -23,7 +23,11 @@ Finally, run `npm install hubot-kubernetes` and you're done!
 - KUBE_HOST - (REQUIRED) Your Kubernetes apiserver url.
 - KUBE_CONTEXT - (OPTIONAL) Default namespace for the queries.
 - KUBE_VERSION - (OPTIONAL) Your Kubernetes api version. (By default: v1)
-- NODE_TLS_REJECT_UNAUTHORIZED - (OPTIONAL) For https connections, if apiserver is using a self signed certificate, this env variable needs to be set as false.
+ 
+#### Self Signed Certificates
+For https connections, you need to set one of the following environment variables:
+- KUBE_CA - Path of the CA certificate file 
+- NODE_TLS_REJECT_UNAUTHORIZED - If you don't have a CA certificate file, set this as false for granting access to unauthorized server.
 
 ### Usage
 
