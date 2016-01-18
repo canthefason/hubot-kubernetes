@@ -9,6 +9,7 @@
 #   KUBE_VERSION
 #   KUBE_CONTEXT
 #   KUBE_CA
+#   KUBE_TOKENS
 #
 # Commands:
 #   hubot k8s [po|rc|svc] (labels) - List all k8s resources under given context
@@ -84,7 +85,8 @@ module.exports = (robot) ->
     if res.match[2] and res.match[2] != ""
       url += "?labelSelector=#{res.match[2].trim()}"
 
-    kubeapi.get url, (err, response) ->
+    roles = robot.auth.userRoles res.envelope.user
+    kubeapi.get {path: url, roles}, (err, response) ->
       if err
         robot.logger.error err
         return res.send "Could not fetch #{type} on *#{namespace}*"
@@ -120,17 +122,45 @@ class Request
       path = require('path')
       @ca = fs.readFileSync(caFile)
 
+    @tokenMap = generateTokens()
+
     host = process.env.KUBE_HOST or 'https://localhost'
     version = process.env.KUBE_VERSION or 'v1'
     @domain = host + '/api/' + version + '/'
 
-  get: (path, callback) ->
-    options =
+
+  getKubeUser: (roles) ->
+    # if there is only one token, then return it right away
+    if @tokenMap.length is 1
+      for role, token of @tokenMap
+        return role
+
+    for role in roles
+      key = @tokenMap[role]
+
+      if key
+        return role
+
+    return ""
+
+
+  get: ({path, roles}, callback) ->
+
+    requestOptions =
       url : @domain + path
-      agentOptions:
+
+    if @ca
+      requestOptions.agentOptions =
         ca: @ca
 
-    request.get options, (err, response, data) ->
+    authOptions = {}
+    user = @getKubeUser roles
+    if user and user isnt ""
+      requestOptions['auth'] =
+        user: user
+        pass: @tokenMap[user]
+
+    request.get requestOptions, (err, response, data) ->
 
       return callback(err)  if err
 
@@ -138,6 +168,22 @@ class Request
         return callback new Error("Status code is not OK: #{response.statusCode}")
 
       callback null, JSON.parse(data)
+
+
+  generateTokens = ->
+    tokens = {}
+    tokensVar = process.env.KUBE_TOKENS
+    if not tokensVar or tokensVar is ""
+      return tokens
+
+    tokenArr = tokensVar.split(',')
+    for token in tokenArr
+      keyPair = token.split(":")
+      unless keyPair.length is 2
+        continue
+      tokens[keyPair[0]] = keyPair[1]
+
+    return tokens
 
 timeSince = (date) ->
   d = new Date(date).getTime()
