@@ -8,6 +8,7 @@
 #   KUBE_HOST
 #   KUBE_VERSION
 #   KUBE_CONTEXT
+#   KUBE_CA
 #
 # Commands:
 #   hubot k8s [po|rc|svc] (labels) - List all k8s resources under given context
@@ -56,7 +57,7 @@ module.exports = (robot) ->
         ps = ""
         for p in ports
           {protocol, port} = p
-          ps += "#{port}/#{protocol}"
+          ps += "#{port}/#{protocol} "
         reply += ">*#{service.metadata.name}*:\n" +
         ">Cluster ip: #{clusterIP}\n>Ports: #{ps}\n>Age: #{timeSince(creationTimestamp)}\n"
       return reply
@@ -113,12 +114,23 @@ class Request
   request = require 'request'
 
   constructor: ->
+    caFile = process.env.KUBE_CA
+    if caFile and caFile != ""
+      fs = require('fs')
+      path = require('path')
+      @ca = fs.readFileSync(caFile)
+
     host = process.env.KUBE_HOST or 'https://localhost'
     version = process.env.KUBE_VERSION or 'v1'
     @domain = host + '/api/' + version + '/'
 
   get: (path, callback) ->
-    request.get @domain + path, (err, response, data) ->
+    options =
+      url : @domain + path
+      agentOptions:
+        ca: @ca
+
+    request.get options, (err, response, data) ->
 
       return callback(err)  if err
 
