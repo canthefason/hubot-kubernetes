@@ -38,10 +38,12 @@ With the assistance of hubot-auth, it is possible to use different basic authent
   - https://user:password@kubernetes.cluster
 * specify a single token using KUBE_TOKENS:
   - export KUBE_TOKENS=user:password
-  When you define only a single token in KUBE_TOKENS environment variable, regardless of the users role, it will always use this single token ffor all the requests.
+
+  When you define only a single token in KUBE_TOKENS environment variable, regardless of the user's role, it will always use this token for all the requests.
 * specify multiple tokens using KUBE_TOKENS:
   - export KUBE_TOKENS=user1:password1,user2:password2
-  When you define multiple tokens in KUBE_TOKENS environment variable, it will select a specific token depending on user role. If a token is not defined for a given user role, then it will try to connect to KUBE_HOST url as is. Therefore, if you set basic auth credentials using KUBE_HOST variable, this will be the default access method, for all the undefined user roles.
+
+  When you define multiple tokens in KUBE_TOKENS environment variable, it will choose a specific token depending on user's role. If a corresponding token is not defined for the given user role, then it will try to connect to KUBE_HOST url as is. Therefore, if you set basic auth credentials using KUBE_HOST variable, this will be the default access method, for all the undefined user roles.
 
 Caveat:
 
