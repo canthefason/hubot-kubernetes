@@ -1,8 +1,11 @@
 {
   "name": "hubot-kubernetes",
   "description": "Hubot Kubernetes integration",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Can Yucel (https://github.com/canthefason)",
+  "contributors": [
+    "Tommi Laukkanen (https://github.com/tlaukkanen)"
+  ],
   "license": "MIT",
   "keywords": [
     "hubot",
