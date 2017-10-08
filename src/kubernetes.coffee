@@ -10,6 +10,7 @@
 #   KUBE_CONTEXT
 #   KUBE_CA
 #   KUBE_TOKENS
+#   KUBE_AUTH_TYPE
 #
 # Commands:
 #   hubot k8s [po|rc|svc] (labels) - List all k8s resources under given context
@@ -155,10 +156,15 @@ class Request
 
     authOptions = {}
     user = @getKubeUser roles
+    authType = process.env.KUBE_AUTH_TYPE
     if user and user isnt ""
-      requestOptions['auth'] =
-        user: user
-        pass: @tokenMap[user]
+      if authType and authType is "bearer"
+        requestOptions['auth'] =
+          bearer: @tokenMap[user]
+      else if not authType or authType is "" or authType is "basic"
+        requestOptions['auth'] =
+          user: user
+          pass: @tokenMap[user]
 
     request.get requestOptions, (err, response, data) ->
 
