@@ -85,7 +85,8 @@ module.exports = (robot) ->
     if res.match[2] and res.match[2] != ""
       url += "?labelSelector=#{res.match[2].trim()}"
 
-    roles = robot.auth.userRoles res.envelope.user
+    userFromBrain = robot.brain.userForName(res.message.user.name)
+    roles = robot.auth.userRoles userFromBrain
     kubeapi.get {path: url, roles}, (err, response) ->
       if err
         robot.logger.error err
