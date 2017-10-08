@@ -26,6 +26,7 @@ Finally, run `npm install hubot-kubernetes` and you're done!
 - KUBE_CONTEXT - (OPTIONAL) Default namespace for the queries. (By default: default)
 - KUBE_VERSION - (OPTIONAL) Your Kubernetes api version. (By default: v1)
 - KUBE_TOKENS - (See Supporting different k8s users section)
+- KUBE_AUTH_TYPE - (OPTIONAL) Kubernetes authentication type, basic and bearer supported. (By default: basic)
 
 #### Self Signed Certificates
 For https connections, you need to set one of the following environment variables:
